@@ -4,14 +4,22 @@ import java.util.HashMap;
 import java.util.Stack;
 import java.util.*;
 
+
 public class HanoiTower {
+    // Hashmap crucial to reference string and class Turm.
+    // Useful when data types dissimilar and user input is in String.
+    // Placed Hashmap here IN MAIN CODE as STATIC ATTRIBUTE (since all main methods are static = can access). So no need to inserted as parameter in other methods like pushScheiben().
+    static HashMap<String, Turm> turmRef = new HashMap<>();
+
+    // main code (rmb considered a method, just that 'main code' runs here
     public static void main(String[] args) {
         int anzahlVersuch = 0;
+        // Initializes the 3 towers at the beginning manually with class Turm.
         Turm LEFT = new Turm();
         Turm MID = new Turm();
         Turm RIGHT = new Turm();
         LEFT.initTower();
-        HashMap<String, Turm> turmRef = new HashMap<>();
+        // .put() = .add() for HashMaps
         turmRef.put("LEFT", LEFT);
         turmRef.put("MIDDLE", MID);
         turmRef.put("RIGHT", RIGHT);
@@ -23,21 +31,28 @@ public class HanoiTower {
         System.out.println("Welcome to the Hanoi Turm Challenge!");
         shortWait(2500);
         System.out.println("Do you need a tutorial? Press Y if yes.");
+        // method tutorial accepts input of char.
+        // And char input MUST be in this format, because .nextLine() only accepts String.
+        // .charAt() auto converts string -> char.
         tutorial(sc.nextLine().toUpperCase().charAt(0));
         System.out.println("Think carefully. Good luck!");
         shortWait(2500);
 
         // List of text to say for specific amount of tries.
+        // Output if no. of tries is 32 - 38
         String[] stringTextOk = {"But I must say, it can be improved. There were a bit of unnecessary steps you did. Perhaps round 2?",
         "Hate to break it, but um your score is not the best. Therefore not really the champ yet. Want to prove me wrong?",
         "So close, yet so far. Maybe just think a little harder and you can beat the game. (There's a faster way to do it)"};
+        // Output if no. of tries is 39 - 50
         String[] stringTextbad = {"Well not the best but not the worst either. I assume this is your first time?",
         "Sorry, seems like you tried your best. Keine Sorge, I spent 30 minutes to find the fastest solution for the Hanoi Tower. Just a few more tries will do.",
         "If you searched the minimum amount of tries for a 5 Scheiben Hanoi Tower, it is only 31 tries. A long way to go."};
+        // Output if no. of tries is 50+
         String [] stringTextdisaster = {"To solve the tower in this amount of tries is insanity. How did you even take this long to do it?",
         "You deserve a Guinness World Record for completing the tower in this amount of tries.",
         ".....\n\n\n\nIch bin sprachlos. Wie bist du hier?"};
 
+        // Loop till game ends
         while (isRunning) {
             separator();
             System.out.println("Number of tries used: " + anzahlVersuch);
@@ -57,10 +72,12 @@ public class HanoiTower {
                 int Sin = sc.nextInt();
                 separator();
                 System.out.println("Second parameter please enter the Turm to move to.\nOptions: Left, Middle, Right");
-                // nextInt() does not read the new line, and nextLine() reads anything inc. new lines. So get rid of it first
+                // nextInt() does not read the new line (created from user pressing enter), and nextLine() reads anything inc. new lines and forgets to read user input. So get rid of it first
                 sc.nextLine();
+                // UNLESS user writes something funny, slight change in case is not problem
                 String Tin = sc.nextLine().toUpperCase();
-                if (moveScheiben(Sin, Tin, turmRef)) {
+                // moveScheiben outputs
+                if (moveScheiben(Sin, Tin)) {
                     anzahlVersuch++;
                     if (RIGHT.currentsize == RIGHT.maxsize) {
                         isRunning = false;
@@ -199,7 +216,7 @@ public class HanoiTower {
     }
 
     @org.jetbrains.annotations.Nullable
-    static Turm checkTopScheiben(int cScheiben, HashMap<String, Turm> turmRef) {
+    static Turm checkTopScheiben(int cScheiben) {
         for (Turm thisTurm : turmRef.values()) {
             if (thisTurm.topScheiben().size == cScheiben) {
                 // Stops entire code
@@ -210,11 +227,11 @@ public class HanoiTower {
     }
 
 
-    static boolean moveScheiben(int scheiben, String turm, HashMap<String, Turm> turmRef) {
+    static boolean moveScheiben(int scheiben, String turm) {
         // Checks all 3 towers if Scheiben is on top.
         // If not returns null, which means Scheiben is not on top on any of the towers.
         try {
-            Turm startTurm = checkTopScheiben(scheiben, turmRef);
+            Turm startTurm = checkTopScheiben(scheiben);
             boolean flag = true;
             boolean sameTurm = false;
             Turm theSelectedTurm = new Turm();
@@ -237,6 +254,7 @@ public class HanoiTower {
             // Assuming they manage to find the Turm
             if (sameTurm) {
                 System.out.println("Error: Selected turm is at the same position as turm of selected Scheiben. Pick another Turm.");
+                shortWait(1000)
                 return false;
             }
             else if (!flag) {
