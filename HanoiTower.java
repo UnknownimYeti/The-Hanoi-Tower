@@ -65,6 +65,7 @@ public class HanoiTower {
             System.out.println("RIGHT TOWER");
             RIGHT.displayTower();
             separator();
+            // try and catch IF program detects Input error. Just make it look nice.
             try {
                 System.out.println("(Scroll up and review the Turm current pattern. Before inputting your data.)\n");
                 System.out.println("Two parameters to input.\nFirst parameter please enter the size of Scheiben to move.\nRange: 1-5");
@@ -76,9 +77,11 @@ public class HanoiTower {
                 sc.nextLine();
                 // UNLESS user writes something funny, slight change in case is not problem
                 String Tin = sc.nextLine().toUpperCase();
-                // moveScheiben outputs
+                // moveScheiben outputs boolean if successful, which adds the attempts
                 if (moveScheiben(Sin, Tin)) {
                     anzahlVersuch++;
+                    // Checks if user has moved all Scheibens to the right rod.
+                    // Success = breaks while loop.
                     if (RIGHT.currentsize == RIGHT.maxsize) {
                         isRunning = false;
                     }
@@ -90,12 +93,15 @@ public class HanoiTower {
                 sc.nextLine();
             }
         }
+        // closes scanner to reduce memory use on program
         sc.close();
+        // Random object executes random selection when randomizing output message depending on number of tries.
         Random random = new Random();
         System.out.println("\nCongratulations! You have finally completed the Hanoi Turm Challenge!");
         shortWait(2000);
         System.out.println("You have managed to beat the tower in " + anzahlVersuch + " tries!");
         shortWait(2000);
+        // Best outcome with win cutscene
         if (anzahlVersuch == 31) {
             System.out.println("You have also successfully done it within the minimum amount of tries.\nTherefore this is the most efficient solution you have found!\nKing of the Hanoi Tower!\n");
             shortWait(1500);
@@ -104,8 +110,8 @@ public class HanoiTower {
             turmNostalgia();
         }
         else if (anzahlVersuch > 31 && anzahlVersuch < 39) {
-            // Have to create new object from random.
-            // random.nextInt(int); int specifies numbers within a range of 0 - (int - 1)
+            // Have to create new object from random to utilize method of random.nextInt()
+            // random.nextInt(int); int specifies numbers within a range of 0 - (int - 1 ; exclusive)
             System.out.println(stringTextOk[random.nextInt(3)]);
         }
         else if (anzahlVersuch > 38 && anzahlVersuch < 51) {
@@ -117,8 +123,11 @@ public class HanoiTower {
     }
 
     static void tutorial(char C) {
-            try {
+        // Checks if input is a character or not. Since parameter is character.
+        // But honestly try catch is useless since input is allowed as String. Just that first character is taken. Thus can write sentence and assume no need tutorial
+        try {
                 if (C == 'Y') {
+                    // Loop for noobs who cant read fast
                     while (true) {
                         System.out.println("Games rules are simple - objective is to move all FIVE of the Scheibens from the left turm to the right turm (NOT THE MIDDLE, RIGHT).");
                         shortWait(5000);
@@ -151,13 +160,19 @@ public class HanoiTower {
 
     static void fireworks() {
         int i = 0;
+        // Every iteration causes printing execution to go faster
         while (i < 10) {
+            // Created array to randomly pick these characters
             String[] listOfStr = {"*", "/", "@", "!", "$", "^", "&", "-", "+", "=", "<", ">", "?"};
             Random random = new Random();
+            // Stores randomly picked character under variables to be used repetiviely
             String firstChar = listOfStr[random.nextInt(listOfStr.length)];
             String secondChar = listOfStr[random.nextInt(listOfStr.length)];
+            // As observed, ().repeat(4) copies fixed spaces of " " and 1 selected character.
+            // So 4 spaces in one block (has one character)  and 4 blocks in one row, as shown in .repeat(4).
             System.out.println((" ".repeat(3).concat(firstChar)).repeat(4));
             HoldIt(i);
+            // Total blocks still 4, just that split amongst diff characters so that create EFFECT that each row no. of one char increases.
             System.out.println(((" ".repeat(3).concat(firstChar)).repeat(3)).concat((" ".repeat(3).concat(secondChar))));
             HoldIt(i);
             System.out.println(((" ".repeat(3).concat(firstChar)).repeat(2)).concat((" ".repeat(3).concat(secondChar)).repeat(2)));
@@ -182,9 +197,11 @@ public class HanoiTower {
             HoldIt(i);
             System.out.println((" ".repeat(3).concat(firstChar)).repeat(4));
 
+            // Entire chain differentiated by this gap.
             System.out.println("\n".repeat(2));
             HoldIt(i);
 
+            // Increment to i = 10
             i++;
         }
     }
