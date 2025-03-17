@@ -209,12 +209,18 @@ public class HanoiTower {
     static void turmNostalgia() {
         shortWait(3500);
         System.out.println("\n".repeat(10));
+        // Fixed length per block. Also gives space from side.
+        // i represents the length of Scheiben. So the further below = longer Scheiben
         for (int i = 1 ; i < 11 ; i++) {
             System.out.println((" ".repeat(8)).concat("-".repeat(15 - i)).concat("x".repeat(i * 2)).concat("-".repeat(15 - i)));
         }
     }
 
+    // Used for fireworks()
+    // Parameters are miliseconds. So 1000 = 1s
     static void HoldIt(int x) {
+        // The only way to pause the print function, cannot modify. Try and catch is a must.
+        // Hold It has .sleep(1000 - (x*100)) since more blocks produced = go faster
         try {
             Thread.sleep(1000 -(x*100));
         }
@@ -223,6 +229,7 @@ public class HanoiTower {
         }
     }
 
+    // Used to generally pause print function, can modify input
     static void shortWait(int x) {
         try {
             Thread.sleep(x);
@@ -232,9 +239,13 @@ public class HanoiTower {
         }
     }
 
+    // Returns turm
     @org.jetbrains.annotations.Nullable
     static Turm checkTopScheiben(int cScheiben) {
+        // Goes thru stack of Turm values with .values()
         for (Turm thisTurm : turmRef.values()) {
+            // If input (cScheiben) matches the top length of Scheiben of current Tower
+            // .size to access length of Scheiben in Scheiben class ; compare in int form
             if (thisTurm.topScheiben().size == cScheiben) {
                 // Stops entire code
                 return thisTurm;
@@ -246,17 +257,24 @@ public class HanoiTower {
 
     static boolean moveScheiben(int scheiben, String turm) {
         // Checks all 3 towers if Scheiben is on top.
-        // If not returns null, which means Scheiben is not on top on any of the towers.
+        // If not returns null (which is an error to handle nicely), which means Scheiben is not on top on any of the towers.
         try {
+            // Assigned turm value to startTurm from checkTopScheiben
+            // You will see why startTurm plays an important role and thus I return the value from method after successful execution
             Turm startTurm = checkTopScheiben(scheiben);
             boolean flag = true;
             boolean sameTurm = false;
+            // DECLARE theSelectedTurm BEFORE loop. You can only declare once.
             Turm theSelectedTurm = new Turm();
+            // Go thru string values of turmRef with keySet() and see if string turm exists.
             for (String rTurm : turmRef.keySet()) {
-                // Successfully got Turm from input
-                // Objects.equals() better for string
+                // Input exists from list of string values (rTurm on exisiting string turm and turm is parameter string)
+                // Objects.equals() better for string ; == for char, int, primitive
                 if (Objects.equals(turm, rTurm)) {
+                    // Use .get() to find value of Hashmap from keySet()
                     theSelectedTurm = turmRef.get(rTurm);
+                    // Possibility that startTurm from checkTopScheiben() matches with theSelectedTurm
+                    // assign boolean values to indicate which condition later on
                     if (theSelectedTurm.equals(startTurm)) {
                         sameTurm = true;
                         break;
@@ -268,22 +286,29 @@ public class HanoiTower {
                 }
             }
 
-            // Assuming they manage to find the Turm
+            // Assuming they manage to find the Turm BUT theSelectedTurm = startTurm
             if (sameTurm) {
                 System.out.println("Error: Selected turm is at the same position as turm of selected Scheiben. Pick another Turm.");
                 shortWait(1000)
                 return false;
             }
+            // Optimal
             else if (!flag) {
+                // The length of the scheiben on top of selected turm
                 int scheibenVal = theSelectedTurm.topScheiben().size;
+                // The object of the Scheiben moved from startTurm to push
                 Scheiben movedScheiben = startTurm.topScheiben();
-                // What if Stack is empty?
+                // What if Stack is empty - <stack>.isEmpty(). Easy.
+                // Also compares if the length of Scheiben on top is not bigger
+                // Parameter of scheiben in int type
                 if (scheiben <  scheibenVal || theSelectedTurm.thisTower.isEmpty()) {
+                    // Comes to moving objects from stack to another stack, MUST have both the start stack and end stack. Remove the instance from start and add instance to end.
                     startTurm.thisTower.pop();
                     startTurm.currentsize --;
                     theSelectedTurm.thisTower.push(movedScheiben);
                     theSelectedTurm.currentsize ++;
                     System.out.println("\nScheiben of length " + scheiben + " successfully moved to " + turm.toLowerCase() + " Turm.");
+                    // Return true = important for if condition in main code: Look at line 81.
                     return true;
                 }
                 else {
@@ -293,6 +318,7 @@ public class HanoiTower {
                     return false;
                 }
             }
+            // When parameter turm from pushScheiben() doesnt exist
             else {
                 System.out.println("Error: Selected turm does not exist.");
                 shortWait(1000);
@@ -300,6 +326,7 @@ public class HanoiTower {
             }
 
         }
+        // When value is null
         catch (NullPointerException e) {
             System.out.println("Error: Scheiben needs to be at top of Turm to move. PLease try again!");
             shortWait(1000);
@@ -307,6 +334,7 @@ public class HanoiTower {
         }
     }
 
+    // Basically a customized box to make program look unique
     static void separator() {
         // 5 rows, a box and 10 char per row
         System.out.println("\n-".concat(" ".repeat(7)).concat("x".repeat(2)).concat(" ".repeat(7)).concat("-"));
@@ -321,26 +349,34 @@ public class HanoiTower {
 class Scheiben {
     int size;
 
+    // Constructor allows me to input customized Scheibens outside of this class.
     public Scheiben(int size) {
         this.size = size;
     }
 }
 
 class Turm {
-    Stack<Scheiben> thisTower = new Stack<>();
+    Stack<Scheiben> thisTower;
     int currentsize;
     int maxsize;
 
+    // Best practice to declare all values in constructor
     public Turm() {
         maxsize = 5;
         currentsize = 0;
+        thisTower = new thisTower();
     }
 
     public Scheiben topScheiben(){
         if (thisTower.isEmpty()) {
+            // Prevents error if theres nothing - just output Scheiben of length 0 ; basically non-existent
+            // .peek() can only return Scheibens, not nulls.
+            // In the checkTopScheiben if condition of .isEmpty() doesnt skip this block for some reason if tower empty, so can only place blocker in method itself
+            // But no harm -> only used for comparison. 0 is not part of the 5 Scheibens so if condition ignores it.
             return new Scheiben(0);
         }
         else {
+            // Stack = uses .peek() to see top value of stack
             return thisTower.peek();
         }
     }
@@ -349,16 +385,21 @@ class Turm {
         int num = 1;
         // Dead weight Scheiben
         for (int i = 0 ; i < (maxsize - currentsize) ; i++) {
+            // Block to indicate the row number ; 5 character space
             System.out.print("Row " +  num + " ".repeat(5));
+            // 12 characters block for the tower.
             System.out.println("-".repeat(12));
             num++;
         }
         // Unfortunately when we go reversed order on stack (top - bottom)
-        // Because stack loops from first item (at bottom)
+        // Because stack loops from first item . Cuz index 0 = first added Scheiben
         // BUT index CANNOT be its size. Remember. size - 1
         for (int j = (currentsize - 1) ; j > -1 ; j--) {
+            // Obtain length of Scheiben in that index position of stack ; .get() to obtain value with index
             int sLength = thisTower.get(j).size;
             System.out.print("Row " +  num + " ".repeat(5));
+            // If you observe: at the end there are 2 spaces and ( ) to show definite length of Scheiben, using sLength
+            // And thus shows .concat() and + can be used in same line.
             System.out.println(("-".repeat(6 - sLength)).concat("x".repeat(sLength * 2)).concat("-".repeat(6 - sLength)).concat(" ".repeat(2)).concat("(") + sLength + ")");
             num++;
         }
@@ -371,11 +412,13 @@ class Turm {
         Scheiben scheiben4 = new Scheiben(4);
         Scheiben scheiben5 = new Scheiben(5);
 
+        // init stack gets filled with Scheibens IN ORDER
         thisTower.push(scheiben5);
         thisTower.push(scheiben4);
         thisTower.push(scheiben3);
         thisTower.push(scheiben2);
         thisTower.push(scheiben1);
+        // Prev. forgot to add currentsize (and we use this to compare, edit during push & pop, and display the tower. Was terrible like program didnt work.
         currentsize = 5;
     }
 
