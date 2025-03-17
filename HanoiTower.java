@@ -5,7 +5,6 @@ import java.util.Stack;
 import java.util.*;
 
 public class HanoiTower {
-    // Testing
     public static void main(String[] args) {
         int anzahlVersuch = 0;
         Turm LEFT = new Turm();
@@ -18,7 +17,7 @@ public class HanoiTower {
         turmRef.put("RIGHT", RIGHT);
         boolean isRunning = true;
         Scanner sc = new Scanner(System.in);
-        System.out.println("\n\n\n\n\n\n");
+        System.out.println("\n".repeat(8));
         separator();
         shortWait(2500);
         System.out.println("Welcome to the Hanoi Turm Challenge!");
@@ -87,12 +86,12 @@ public class HanoiTower {
             System.out.println("Gute Arbeit und bis nächstes mal!");
             turmNostalgia();
         }
-        else if (anzahlVersuch > 31 && anzahlVersuch < 38) {
+        else if (anzahlVersuch > 31 && anzahlVersuch < 39) {
             // Have to create new object from random.
             // random.nextInt(int); int specifies numbers within a range of 0 - (int - 1)
             System.out.println(stringTextOk[random.nextInt(3)]);
         }
-        else if (anzahlVersuch > 37 && anzahlVersuch < 51) {
+        else if (anzahlVersuch > 38 && anzahlVersuch < 51) {
             System.out.println(stringTextbad[random.nextInt(3)]);
         }
         else {
