@@ -5,6 +5,7 @@ import java.util.Stack;
 import java.util.*;
 
 public class HanoiTower {
+    // Testing
     public static void main(String[] args) {
         int anzahlVersuch = 0;
         Turm LEFT = new Turm();
